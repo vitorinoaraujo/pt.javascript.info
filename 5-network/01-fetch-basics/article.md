@@ -1,43 +1,44 @@
 
 # Fetch
 
-JavaScript can send network requests to the server and load new information whenever is needed.
+JavaScript pode enviar pedidos de rede para o servidor e carregar nova informação sempre que for necessária.
 
-For example, we can use a network request to:
+Por exemplo, podemos usar um pedido de rede para:
 
-- Submit an order,
-- Load user information,
-- Receive latest updates from the server,
+- Submeter um pedido,
+- Carregar informação sobre user,
+- Receber updates mais recentes do servidor,
 - ...etc.
 
-...And all of that without reloading the page!
+...E tudo isto sem fazer _reload_ da página!
 
 There's an umbrella term "AJAX" (abbreviated <b>A</b>synchronous <b>J</b>avaScript <b>A</b>nd <b>X</b>ML) for network requests from JavaScript. We don't have to use XML though: the term comes from old times, that's why that word is there. You may have heard that term already.
 
-There are multiple ways to send a network request and get information from the server.
+Existem vários métodos de fazer um pedido de rede e obter informação de um servidor.
 
-The `fetch()` method is modern and versatile, so we'll start with it. It's not supported by old browsers (can be polyfilled), but very well supported among the modern ones.
+O método `fetch()` é moderno e versátil, portanto será esse pelo qual iremos começar. Não é suportado por browsers mais antigos (podem ser usados polyfills), mas tem suporte muito bom nos mais modernos.
 
-The basic syntax is:
+A sintaxe básica é a seguinte:
 
 ```js
 let promise = fetch(url, [options])
 ```
 
-- **`url`** -- the URL to access.
-- **`options`** -- optional parameters: method, headers etc.
+- **`url`** -- o URL a aceder.
+- **`options`** -- parâmetros opcionais: método, cabeçalhos etc.
 
-Without `options`, that is a simple GET request, downloading the contents of the `url`.
+Sem `options`, trata-se de um simples pedido GET, fazendo o download do conteúdo do `url`.
 
-The browser starts the request right away and returns a promise that the calling code should use to get the result.
+O browser inicia o pedido de imediato e retorna uma `promise` de que o código invocado deve ser usado para obter o resultado.
 
-Getting a response is usually a two-stage process.
+Obter uma resposta é normalmente um processo que se divide em dois passos.
 
-**First, the `promise`, returned by `fetch`, resolves with an object of the built-in [Response](https://fetch.spec.whatwg.org/#response-class) class as soon as the server responds with headers.**
+**Primeiro, a `promise`, retornada por `fetch`, responde com um objecto do tipo [Response](https://fetch.spec.whatwg.org/#response-class) class assim que o servidor responde com os headers.**
 
-At this stage we can check HTTP status, to see whether it is successful or not, check headers, but don't have the body yet.
+Neste instante podemos validar o status HTTP, para verificar se teve sucesso ou não, validar os headers, mas ainda não temos o body.
 
 The promise rejects if the `fetch` was unable to make HTTP-request, e.g. network problems, or there's no such site. Abnormal HTTP-statuses, such as 404 or 500 do not cause an error.
+
 
 We can see HTTP-status in response properties:
 
@@ -150,7 +151,7 @@ for (let [key, value] of response.headers) {
 }
 ```
 
-## Request headers
+## Headers dos pedidos
 
 To set a request header in `fetch`, we can use the `headers` option. It has an object with outgoing headers, like this:
 
@@ -162,7 +163,7 @@ let response = fetch(protectedUrl, {
 });
 ```
 
-...But there's a list of [forbidden HTTP headers](https://fetch.spec.whatwg.org/#forbidden-header-name) that we can't set:
+...mas existe uma lista de [headers HTTP proibidos](https://fetch.spec.whatwg.org/#forbidden-header-name) que não podemos utilizar:
 
 - `Accept-Charset`, `Accept-Encoding`
 - `Access-Control-Request-Headers`
@@ -185,11 +186,11 @@ let response = fetch(protectedUrl, {
 - `Proxy-*`
 - `Sec-*`
 
-These headers ensure proper and safe HTTP, so they are controlled exclusively by the browser.
+Estes métodos asseguram um adequado e seguro HTTP, por isso são controlados exlusivamente pelo browser.
 
-## POST requests
+## Pedidos POST
 
-To make a `POST` request, or a request with another method, we need to use `fetch` options:
+Para fazer um pedido `POST`, ou um pedido com um outro método, temos de usar as opções `fetch`:
 
 - **`method`** -- HTTP-method, e.g. `POST`,
 - **`body`** -- the request body, one of:
@@ -198,9 +199,9 @@ To make a `POST` request, or a request with another method, we need to use `fetc
   - `Blob`/`BufferSource` to send binary data,
   - [URLSearchParams](info:url), to submit the data in `x-www-form-urlencoded` encoding, rarely used.
 
-The JSON format is used most of the time.
+O formato JSON é usado na maioria das vezes.
 
-For example, this code submits `user` object as JSON:
+Por exemplo, este código submete o objecto `user` como JSON:
 
 ```js run async
 let user = {
@@ -226,11 +227,11 @@ Please note, if the request `body` is a string, then `Content-Type` header is se
 
 But, as we're going to send JSON, we use `headers` option to send `application/json` instead, the correct `Content-Type` for JSON-encoded data.
 
-## Sending an image
+## Envio de uma imagem
 
-We can also submit binary data with `fetch` using `Blob` or `BufferSource` objects.
+Também podemos submeter dados binários com `fetch` usando objectos do tipo `Blob` ou `BufferSource`.
 
-In this example, there's a `<canvas>` where we can draw by moving a mouse over it. A click on the "submit" button sends the image to server:
+Neste exemplo, existe um `<canvas>` onde podemos desenhar movendo o ponteiro do rato. Um click no botão de "submit" envia a imagem para o servidor:
 
 ```html run autorun height="90"
 <body style="margin:0">
@@ -263,7 +264,7 @@ In this example, there's a `<canvas>` where we can draw by moving a mouse over i
 
 Please note, here we don't set `Content-Type` header manually, because a `Blob` object has a built-in type (here `image/png`, as generated by `toBlob`). For `Blob` objects that type becomes the value of `Content-Type`.
 
-The `submit()` function can be rewritten without `async/await` like this:
+A função `submit()` pode ser reescrita sem `async/await` do seguinte modo:
 
 ```js
 function submit() {
@@ -278,16 +279,16 @@ function submit() {
 }
 ```
 
-## Summary
+## Summário
 
-A typical fetch request consists of two `await` calls:
+Um pedido típico de fetch consiste em duas chamadas `await`:
 
 ```js
 let response = await fetch(url, options); // resolves with response headers
 let result = await response.json(); // read body as json
 ```
 
-Or, without `await`:
+Ou, sem `await`:
 
 ```js
 fetch(url, options)
@@ -296,20 +297,20 @@ fetch(url, options)
 ```
 
 Response properties:
-- `response.status` -- HTTP code of the response,
-- `response.ok` -- `true` is the status is 200-299.
-- `response.headers` -- Map-like object with HTTP headers.
+- `response.status` -- código HTTP da resposta,
+- `response.ok` -- `true` se o status é 200-299.
+- `response.headers` -- objecto do tipo Map que contém os HTTP headers.
 
 Methods to get response body:
-- **`response.text()`** -- return the response as text,
-- **`response.json()`** -- parse the response as JSON object,
+- **`response.text()`** -- retorna a resposta como texto,
+- **`response.json()`** -- parsa a resposta como um objecto JSON,
 - **`response.formData()`** -- return the response as `FormData` object (form/multipart encoding, see the next chapter),
 - **`response.blob()`** -- return the response as [Blob](info:blob) (binary data with type),
 - **`response.arrayBuffer()`** -- return the response as [ArrayBuffer](info:arraybuffer-binary-arrays) (low-level binary data),
 
-Fetch options so far:
-- `method` -- HTTP-method,
-- `headers` -- an object with request headers (not any header is allowed),
-- `body` -- the data to send (request body) as `string`, `FormData`, `BufferSource`, `Blob` or `UrlSearchParams` object.
+Opções fetch disponíveis:
+- `method` -- método HTTP,
+- `headers` -- um objecto com os request headers (nem todos os headers são permitidos),
+- `body` -- a data a ser enviada (o body do pedido) como `string`, `FormData`, `BufferSource`, `Blob` ou objecto `UrlSearchParams`.
 
-In the next chapters we'll see more options and use cases of `fetch`.
+Nos próximos capitulos iremos ver mais opções e casos de uso para `fetch`.
