@@ -37,15 +37,14 @@ Obter uma resposta é normalmente um processo que se divide em dois passos.
 
 Neste instante podemos validar o status HTTP, para verificar se teve sucesso ou não, validar os headers, mas ainda não temos o body.
 
-The promise rejects if the `fetch` was unable to make HTTP-request, e.g. network problems, or there's no such site. Abnormal HTTP-statuses, such as 404 or 500 do not cause an error.
+A `promise`rejeita se o `fetch`não conseguir obter o pedido HTTP, ex. problemas de rede, ou a não existência do site. Códigos de status HTTP tais como 404 ou 500 não causam erro.
 
+Podemos ver os Status HTTP nas propriedades da resposta:
 
-We can see HTTP-status in response properties:
+- **`status`** -- código de status HTTP, ex. 200.
+- **`ok`** -- booleano, `true` se o código de status HTTP for 200-299.
 
-- **`status`** -- HTTP status code, e.g. 200.
-- **`ok`** -- boolean, `true` if the HTTP status code is 200-299.
-
-For example:
+Por exemplo:
 
 ```js
 let response = await fetch(url);
@@ -57,19 +56,18 @@ if (response.ok) { // if HTTP-status is 200-299
   alert("HTTP-Error: " + response.status);
 }
 ```
+**Segundo, para obter o corpo da resposta, temos de usar uma chamada de método adicional**
 
-**Second, to get the response body, we need to use an additional method call.**
+`Response` devolve vários métodos do tipo `promise`que permitem aceder ao corpo da resposta em vários formatos:
 
-`Response` provides multiple promise-based methods to access the body in various formats:
+- **`response.text()`** -- lê a resposta e devolve como texto,
+- **`response.json()`** -- lê a resposta e devolve como JSON,
+- **`response.formData()`** -- lê a resposta e devolve como objecto `FormData` (explicado no [próximo capítulo](info:formdata)),
+- **`response.blob()`** -- lê a resposta e devolve como [Blob](info:blob) (tipo de dados binário),
+- **`response.arrayBuffer()`** -- lê a resposta e devolve como [ArrayBuffer](info:arraybuffer-binary-arrays) (representação de baixo nível de tipos de dado binário),
+- adicionalmente, `response.body` é um objecto do tipo [ReadableStream](https://streams.spec.whatwg.org/#rs-class) , permite que o cporto da resposta seja lido `chunk-by-chunk`, veremos um exemplo mais à frente.
 
-- **`response.text()`** -- read the response and return as text,
-- **`response.json()`** -- parse the response as JSON,
-- **`response.formData()`** -- return the response as `FormData` object (explained in the [next chapter](info:formdata)),
-- **`response.blob()`** -- return the response as [Blob](info:blob) (binary data with type),
-- **`response.arrayBuffer()`** -- return the response as [ArrayBuffer](info:arraybuffer-binary-arrays) (low-level representaion of binary data),
-- additionally, `response.body` is a [ReadableStream](https://streams.spec.whatwg.org/#rs-class) object, it allows to read the body chunk-by-chunk, we'll see an example later.
-
-For instance, let's get a JSON-object with latest commits from GitHub:
+Por exemplo, vamos obter um objecto JSON com os commits mais recentes do GitHub:
 
 ```js run async
 let url = 'https://api.github.com/repos/javascript-tutorial/en.javascript.info/commits';
@@ -82,7 +80,7 @@ let commits = await response.json(); // read response body and parse as JSON
 alert(commits[0].author.login);
 ```
 
-Or, the same without `await`, using pure promises syntax:
+Ou, o mesmo mas sem o uso de `await`, usando o sintaxe das `promises`:
 
 ```js run
 fetch('https://api.github.com/repos/javascript-tutorial/en.javascript.info/commits')
@@ -90,7 +88,7 @@ fetch('https://api.github.com/repos/javascript-tutorial/en.javascript.info/commi
   .then(commits => alert(commits[0].author.login));
 ```
 
-To get the response text, `await response.text()` instead of `.json()`:
+Para obter o texto de resposta, `await response.text()` em vez de `.json()`:
 
 ```js run async
 let response = await fetch('https://api.github.com/repos/javascript-tutorial/en.javascript.info/commits');
@@ -100,7 +98,7 @@ let text = await response.text(); // read response body as text
 alert(text.slice(0, 80) + '...');
 ```
 
-As a show-case for reading in binary format, let's fetch and show a logo image of ["fetch" specification](https://fetch.spec.whatwg.org) (see chapter [Blob](info:blob) for details about operations on `Blob`):
+Para demonstrat o uso da leitura em formato binário, vamos obter e mostrar uma imagem de ["fetch" specification](https://fetch.spec.whatwg.org) (ver capítulo [Blob](info:blob) para detalhes acerca  `Blob`):
 
 ```js async run
 let response = await fetch('/article/fetch/logo-fetch.svg');
